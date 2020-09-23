@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Activity Voter</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+   
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuex/dist/vuex.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+      /*   
+        ADD CSS HERE 
+      */
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-card class="overflow-hidden">
+          <v-app-bar
+            absolute
+            color="#fcb69f"
+            dark
+            shrink-on-scroll
+            src="https://picsum.photos/1920/1080?random"
+            scroll-target="#scrolling-techniques-2"
+          >
+            <template v-slot:img="{ props }">
+              <v-img
+                v-bind="props"
+                gradient="to top right, rgba(19,84,122,.5), rgba(128,208,199,.8)"
+              ></v-img>
+            </template>
+      
+            <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
+      
+            <v-toolbar-title><v-icon large color="white darken-2">mdi-email</v-icon> MAIL BOX</v-toolbar-title>
+      
+            <v-spacer></v-spacer>
+      
+            <!-- <v-btn icon>
+              <v-icon>mdi-login</v-icon>
+            </v-btn> -->
+      
+            <v-btn icon @click="signout">
+              <v-icon>mdi-logout</v-icon>
+            </v-btn>
+          </v-app-bar>
+          <v-sheet
+            id="scrolling-techniques-2"
+            class="overflow-y-auto"
+            max-height="600"
+          >
+            <v-container style="height: 200px;"></v-container>
+          </v-sheet>
+          <mail-list
+          v-bind:subjects="subjects"
+          v-bind:froms="froms"
+          v-bind:dates="dates"
+          >
+          <mail-list/>
+        </v-card>
+       
+        <dialog-login
+        v-bind:account="account"
+        v-bind:login="login"
+        v-bind:auth_login_inverse="auth_login_inverse"
+        ><dialog-login/>
+      </v-app>
+    </div>
+  </body>
+
+  <script>
+     Vue.component('mail-list', {
+      props: ["subjects","froms","dates"],
+      template: `
+      <v-row justify="center">
+    <v-expansion-panels popout v-if="subjects">
+      <v-expansion-panel v-for="i in subjects.length" v-bind:key="i">
+        <v-expansion-panel-header>{{subjects[i]}} - {{dates[i]}}</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          From : {{froms[i]}}
+          </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </v-row>
+      `
+    });
+    Vue.component('dialog-login', {
+      props: ["account","login","auth_login_inverse"],
+      // data: function(){
+      //     return {
+      //       account:{
+      //       email:'',
+      //       password:''
+      //     }
+      //   }
+      // },
+      template: `
+      <v-row justify="center">
+    <v-dialog v-model="auth_login_inverse" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Login</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              
+              
+              <v-col cols="12">
+                <v-text-field label="Email*" v-model="account.email" required></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field label="Password*" type="password" v-model="account.password" required></v-text-field>
+              </v-col>
+              
+             
+            </v-row>
+          </v-container>
+          <!-- <small>*indicates required field</small> -->
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="login(account)">Login</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+      `
+    });
+
+    Vue.use(Vuex);
+    const store = new Vuex.Store({
+      state: {
+    auth_login: false,
+    account: {
+      email: "",
+      password: ""
+    },
+    mailList:{}
+   
+  },
+  getters:{
+    auth_login_inverse(state){
+      return !state.auth_login
+    },
+    subjects(state){
+      return state.mailList.subject
+    },
+    dates(state){
+      return state.mailList.date
+    },
+    froms(state){
+      return state.mailList.from
+    }
+  },
+  mutations: {
+    account_sign_in(state,account){ //, params
+      console.log('Store sign in')
+
+      state.account = account
+      axios.post('http://localhost:3000/loginmail', state.account).then(res => {
+        state.mailList = res.data
+        console.log(res.data)
+        // state.mailList.add(res.data)
+        console.log(state.mailList)
+      })
+        state.auth_login = true      
+    },
+    account_sign_out(state){
+      console.log('Store sign out')
+      state.account.password = ""
+
+      state.account.email = ""
+      state.auth_login = false
+      state.mailList = {}
+    }
+  },
+  // actions: {
+    // login({commit},account){
+    //   commit('account_sign_in',account);
+      
+    // }
+    // ,
+    // sign_out({commit}){
+    //   commit('account_sign_out');
+    // }
+  // },
+  // modules: {
+  // }
+    });
+    new Vue({
+      el: '#app',
+      store,
+      vuetify: new Vuetify(),
+      data() {
+        return {
+          account:{
+              email:'',
+              password:''
+          }
+          
+        };
+      },
+      computed: {
+        // Vuex.mapGetters(['auth_login_inverse', 'subjects', 'dates','froms']),
+          auth_login_inverse () {
+            return this.$store.getters.auth_login_inverse
+          },
+          subjects () {
+            return this.$store.getters.subjects
+          },
+          dates () {
+            return this.$store.getters.dates
+          },
+          froms () {
+            return this.$store.getters.froms
+          }
+          // ,
+          // account () {
+          //   return this.$store.state.account
+          // }
+      },
+        methods: {
+        signout() {
+          this.$store.commit('account_sign_out');
+        },
+        login(account){
+
+          this.$store.commit('account_sign_in',account)
+        }
+        // onSubmit(e) {
+        //   e.preventDefault();
+        //   this.addActivity(this.activityName);
+        //   this.activityName = '';
+        // }
+      }
+    });
+  </script>
+</html>
