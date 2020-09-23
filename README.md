@@ -1,4 +1,4 @@
-# electron-vue
+# electron-vue-mailbox
 
 It is my second electron project using https://www.electronforge.io/, which I combine it with vue.js.
 For this project, I build mailbox that allow you to enter your email and password (gmail account, which you should to make you google account in less secure mode).
