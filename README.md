@@ -6,7 +6,6 @@ Basically, since my first project cannot be packaged as windows .exe, then I re-
 
 You can run it using 'npm start' or just install the 'Mailbox Setup.exe' on your windows.
 
-You need to run the server too which I build it using express.js and epsitec-imap-simple for fetch the email (subject, from, and date), here : https://github.com/yusronhanan/express-imap
 ## Project setup
 ```
 npm install
