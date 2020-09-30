@@ -84,7 +84,7 @@
       template: `
       <v-row justify="center">
     <v-expansion-panels popout v-if="subjects">
-      <v-expansion-panel v-for="i in subjects.length" v-bind:key="i">
+      <v-expansion-panel v-for="i in (subjects.length-1)" v-bind:key="i">
         <v-expansion-panel-header>{{subjects[i]}} - {{dates[i]}}</v-expansion-panel-header>
         <v-expansion-panel-content>
           From : {{froms[i]}}

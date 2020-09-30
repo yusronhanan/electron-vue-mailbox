@@ -25,19 +25,20 @@ app.post('/loginmail', upload.array(), function (req, res, next) {
 
 
  imaps.connect(config).then(function (connection) {
-    
-   
-    
+
+
+
   return connection.openBox('INBOX').then(function () {
       var searchCriteria = [
-          'UNSEEN'
-      ];
- 
+        //   'UNSEEN'
+        '1:10' 
+    ];
+
       var fetchOptions = {
           bodies: ['HEADER'],
           markSeen: false
       };
- 
+
       return connection.search(searchCriteria, fetchOptions).then(function (results) {
           var subjects = results.map(function (res) {
               return res.parts.filter(function (part) {
@@ -54,7 +55,7 @@ app.post('/loginmail', upload.array(), function (req, res, next) {
                 return part.which === 'HEADER';
             })[0].body.from[0];
         });
- 
+
         var data = {
             subject : subjects,
             date : dates,
