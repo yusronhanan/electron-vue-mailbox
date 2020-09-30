@@ -10,13 +10,18 @@ You can run it using 'npm start' or just install the 'Mailbox Setup.exe' on your
 ```
 npm install
 ```
-
+or
+```
+yarn install
+```
 ### Run it
 ```
 npm start
 ```
-
-
+or
+```
+yarn start
+```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
